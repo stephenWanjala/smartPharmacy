@@ -50,8 +50,8 @@ class Stock(models.Model):
             # Log the removal for reference (You can customize this as per your needs)
             ExpiredMedicineLog.objects.create(medicine=medicine, quantity_removed=quantity_removed)
 
-            def __str__(self):
-                return f"{self.medicine.name} - Quantity: {self.quantity}"
+    def __str__(self):
+        return f"{self.medicine.name} - Quantity: {self.quantity}"
 
 
 class ExpiredMedicineLog(models.Model):
@@ -102,9 +102,17 @@ class Sale(models.Model):
         return f"{self.medicine.name} - {self.sales_date}"
 
     def save(self, *args, **kwargs):
-        # Update stock quantity before saving the sale
-        self.update_stock_quantity()
-        super().save(*args, **kwargs)
+        if self.is_valid_sale():
+            # Update stock quantity before saving the sale
+            self.update_stock_quantity()
+            super().save(*args, **kwargs)
+
+    def is_valid_sale(self):
+        # Check if the medicine is in stock and has been purchased
+        stock = Stock.objects.filter(medicine=self.medicine).first()
+        if not stock or stock.quantity < self.quantity_sold:
+            return False
+        return True
 
     def update_stock_quantity(self):
         # Get the stock object for the medicine
