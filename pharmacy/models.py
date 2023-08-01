@@ -114,11 +114,17 @@ class Sale(models.Model):
             return False
         return True
 
+    # def update_stock_quantity(self):
+    #     # Get the stock object for the medicine
+    #     stock, created = Stock.objects.get_or_create(medicine=self.medicine)
+    #     # Reduce stock quantity by the quantity sold
+    #     stock.quantity -= self.quantity_sold
+    #     # Ensure stock quantity does not go below zero
+    #     stock.quantity = max(stock.quantity, 0)
+    #     stock.save()
     def update_stock_quantity(self):
         # Get the stock object for the medicine
         stock, created = Stock.objects.get_or_create(medicine=self.medicine)
         # Reduce stock quantity by the quantity sold
         stock.quantity -= self.quantity_sold
-        # Ensure stock quantity does not go below zero
-        stock.quantity = max(stock.quantity, 0)
         stock.save()
