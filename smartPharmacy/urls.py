@@ -18,7 +18,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 import pharmacy.urls
-
+admin.site.site_header = 'Smart Pharmacy'
+admin.site.site_title = 'Smart Pharmacy'
+admin.site.index_title = 'Smart Pharmacy Admin'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include(pharmacy.urls))
