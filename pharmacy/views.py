@@ -12,18 +12,18 @@ def index(request):
 
 def loginPage(request):
     if request.user.is_authenticated:
-        if request.user.is_superuser:
-            return redirect(to='/admin')
-        redirect(to='home')
+        # if request.user.is_superuser:
+        #     return redirect(to='/admin')
+        redirect(to='/home')
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request=request, user=user)
-            if user.is_superuser:
-                return redirect(to='/admin')
-            return redirect(to='home')
+            # if user.is_superuser:
+            #     return redirect(to='/admin')
+            return redirect(to='/home')
         else:
             messages.info(request, 'Username or password is incorrect')
     context = {'messages': messages, 'currentYear': datetime.now().year}
@@ -33,3 +33,7 @@ def loginPage(request):
 def logout_view(request):
     logout(request)
     return redirect(to='index')
+
+
+def home(request):
+    return render(request=request, template_name='pharmacy/home.html')
