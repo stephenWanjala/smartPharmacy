@@ -1,5 +1,6 @@
 # Create your models here.
 # pharmacy/models.py
+from time import timezone
 
 from django.db import models
 from django.db.models.signals import post_save
@@ -95,7 +96,7 @@ class Sale(models.Model):
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
     quantity_sold = models.PositiveIntegerField()
     selling_price = models.DecimalField(max_digits=10, decimal_places=2)
-    sales_date = models.DateField(auto_now_add=True)
+    sales_date = models.DateField(auto_now_add=True,)
     customer_name = models.CharField(max_length=100)
 
     def __str__(self):

@@ -24,8 +24,39 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'categories' %}" data-toggle="collapse" data-target="#collapseCategory"
+           aria-expanded="true" aria-controls="collapseCategory">
+            <i class="fa-solid fa-money-check-dollar"></i>
+            <span>Categories</span>
+        </a>
+        <div id="collapseCategory" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Medicine Category</h6>
+                <a class="collapse-item" href="{% url 'categories' %}">Category</a>
+               {% if   request.user.is_superuser  %}
+               	 <a class="collapse-item" href="{% url 'add_category' %}"> Add Category</a>
+               {% endif %}
+            </div>
+        </div>
+    </li>
+
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMedicine"
+           aria-expanded="true" aria-controls="collapseMedicine">
+            <i class="fa-solid fa-money-check-dollar"></i>
+            <span>Drugs</span>
+        </a>
+        <div id="collapseMedicine" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Drugs</h6>
+                <a class="collapse-item" href="#sales">Medicine</a>
+                <a class="collapse-item" href="">Add Medicine</a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#sales" data-toggle="collapse" data-target="#collapseTwo"
            aria-expanded="true" aria-controls="collapseTwo">
             <i class="fa-solid fa-money-check-dollar"></i>
             <span>Sales</span>
@@ -33,7 +64,7 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Sales</h6>
-                <a class="collapse-item" href="">Sales</a>
+                <a class="collapse-item" href="#sales">Sales</a>
                 <a class="collapse-item" href="">Makes A sale</a>
             </div>
         </div>
