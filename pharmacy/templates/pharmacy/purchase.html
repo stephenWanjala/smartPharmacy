@@ -1,0 +1,34 @@
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Purchases</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-bs-toggle="modal"
+           data-bs-target="#addPurchaseModal"><i
+                class="fas fa-plus fa-sm text-white-50"></i> Make a Purchase</a>
+    </div>
+
+    {% include 'pharmacy/purchaseModal.html' %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Medicine</th>
+            <th>Quantity</th>
+            <th>Amount</th>
+            <th>Supplier</th>
+            <th>Purchase Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for purchase in purchases %}
+            <tr>
+                <td>{{ purchase.medicine }}</td>
+                <td>{{ purchase.quantity_purchased }}</td>
+                <td>{{ purchase.purchase_amount }}</td>
+                <td>{{ purchase.supplier }}</td>
+                <td>{{ purchase.purchase_date }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+</div>

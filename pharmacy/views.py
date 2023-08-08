@@ -5,15 +5,11 @@ from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime, date
 
-from pharmacy.forms.forms import MedicineCategoryForm, MedicineForm
-from pharmacy.models import Sale, Stock, Category, Medicine
+from pharmacy.forms.forms import MedicineCategoryForm, MedicineForm, PurchaseForm, SaleForm
+from pharmacy.models import Sale, Stock, Category, Medicine, Purchase
 
 
 # Create your views here.
-
-def index(request):
-    return render(request, template_name="pharmacy/index.html")
-
 
 def loginPage(request):
     if request.user.is_authenticated:
@@ -42,6 +38,18 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def home(request):
+    if request.method == 'POST':
+        form = SaleForm(request.POST)
+        if form.is_valid():
+            # Update stock and save the sale
+            medicine = form.cleaned_data['medicine']
+            quantity = form.cleaned_data['quantity_sold']
+            # update_stock_on_sale(medicine, quantity)
+            form.save()
+            return redirect('home')
+
+    else:
+        form = SaleForm()
     today = date.today()
     total_sales = Sale.objects.filter(sales_date=today).count()
     total_amount_received = Sale.objects.filter(sales_date=today).aggregate(Sum('selling_price'))[
@@ -75,13 +83,14 @@ def home(request):
     stock_sold_percentage = round(((total_stock_sold / total_stock_quantity) * 100 if total_stock_quantity > 0 else 0),
                                   2)
 
-    sales = Sale.objects.filter(sales_date=today)
+    sales = Sale.objects.filter()
 
     context = {'currentYear': datetime.now().year, 'total_sales': total_sales,
                'total_amount_received': total_amount_received, 'total_sales_monthly': total_sales_monthly,
                'total_amount_received_monthly': total_amount_received_monthly,
                'stock_status_list': stock_status_list, 'stock_sold_percentage': stock_sold_percentage,
-               'sales': sales}
+               'sales': sales,
+               'form': form}
     return render(request=request, template_name='pharmacy/home.html', context=context)
 
 
@@ -133,6 +142,7 @@ def delete_category(request, category_id):
         return redirect('categories')
 
 
+@login_required(login_url='login')
 def medicines(request):
     # Check if the user is admin to handle medicine creation
     if request.user.is_superuser:
@@ -141,13 +151,13 @@ def medicines(request):
             if form.is_valid():
                 form.save()
                 return redirect('medicines')
-        else:
-            form = MedicineForm()
+
     medicines = Medicine.objects.all()
     form = MedicineForm()
     return render(request, 'pharmacy/medicines.html', {'medicines': medicines, 'form': form})
 
 
+@login_required(login_url='login')
 def delete_medicine(request, medicine_id):
     if request.method == 'POST':
         medicine = get_object_or_404(Medicine, pk=medicine_id)
@@ -165,3 +175,42 @@ def add_medicine(request):
     else:
         form = MedicineForm()
     return render(request, 'pharmacy/createMedicine.html', {'form': form, 'currentYear': datetime.now().year})
+
+
+@login_required(login_url='login')
+def purchases(request):
+    if request.method == 'POST':
+        form = PurchaseForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('purchases')
+
+    else:
+        form = PurchaseForm()
+
+    purchases = Purchase.objects.all()
+    return render(request, 'pharmacy/Purchases.html', {'form': form, 'purchases': purchases})
+
+
+@login_required(login_url='login')
+def view_stock(request):
+    stocks = Stock.objects.all()
+    return render(request, 'pharmacy/view_stock.html', {'stocks': stocks})
+
+
+@login_required(login_url='login')
+def make_sale(request):
+    if request.method == 'POST':
+        form = SaleForm(request.POST)
+        if form.is_valid():
+            # Update stock and save the sale
+            medicine = form.cleaned_data['medicine']
+            quantity = form.cleaned_data['quantity_sold']
+            # update_stock_on_sale(medicine, quantity)
+            form.save()
+            return redirect('home')
+
+    else:
+        form = SaleForm()
+
+    return render(request, 'pharmacy/home.html', {'form': form})

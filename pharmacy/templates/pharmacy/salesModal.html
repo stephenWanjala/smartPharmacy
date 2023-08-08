@@ -1,0 +1,19 @@
+<!-- pharmacy/templates/make_sale_modal.html -->
+
+<div class="modal fade" id="makeSaleModal" tabindex="-1" aria-labelledby="makeSaleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="makeSaleModalLabel">Make a Sale</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Make Sale</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

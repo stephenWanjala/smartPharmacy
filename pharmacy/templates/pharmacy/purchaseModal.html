@@ -1,0 +1,37 @@
+<!-- Modal -->
+        <div class="modal fade" id="addPurchaseModal" tabindex="-1" aria-labelledby="addPurchaseModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addPurchaseModalLabel">Add Purchase</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                {{ form.medicine.label_tag }}
+                                {{ form.medicine }}
+                            </div>
+                             <div class="mb-3">
+                                {{ form.supplier.label_tag }}
+                                {{ form.supplier }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.quantity_purchased.label_tag }}
+                                {{ form.quantity_purchased }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.purchase_amount.label_tag }}
+                                {{ form.purchase_amount }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.purchase_date.label_tag }}
+                                {{ form.purchase_date }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Purchase</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
