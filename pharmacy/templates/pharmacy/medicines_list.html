@@ -2,8 +2,13 @@
         <h1>Medicines({{ medicines.count }})</h1>
         <ul class="list-group">
             {% for medicine in medicines %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>{{ medicine.name }}</span>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ medicine.name }}</span>
+            {% if medicine.stock.quantity %}
+            	<span class="badge bg-primary rounded-pill">{{ medicine.stock.quantity }} in Stock</span>
+            {% else %}
+            	<span class="badge bg-danger rounded-pill">{{ medicine.stock.quantity }} out of Stock</span>
+            {% endif %}
                 {% if request.user.is_superuser %}
                 <form method="post" action="{% url 'delete_medicine' medicine.id %}">
                     {% csrf_token %}

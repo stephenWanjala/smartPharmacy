@@ -56,4 +56,7 @@ class SaleForm(forms.ModelForm):
             'customer_name': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
-
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter medicines that are not out of stock
+        self.fields['medicine'].queryset = Medicine.objects.filter(stock__quantity__gt=0)

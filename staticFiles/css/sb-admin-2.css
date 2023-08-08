@@ -9940,6 +9940,18 @@ a:focus {
   background-image: linear-gradient(180deg, #f8f9fc 10%, #c2cbe5 100%);
   background-size: cover;
 }
+.bg-gradient-primary-alternate {
+  background-color: #1172ec;
+  background-image: linear-gradient(180deg, #1172ec 10%, #0054c1 100%);
+  background-size: cover;
+}
+
+.bg-gradient-primary-accent {
+  background-color: #6200ea;
+  background-image: linear-gradient(180deg, #6200ea 10%, #4200d3 100%);
+  background-size: cover;
+}
+
 
 .bg-gradient-dark {
   background-color: #5a5c69;

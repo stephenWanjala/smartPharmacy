@@ -3,7 +3,7 @@
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'home' %}">
-        <div class="sidebar-brand-text mx-3">Smart Pharmacy</div>
+        <div class="sidebar-brand-text mx-3">Chetemba Pharmacy</div>
     </a>
 
     <!-- Divider -->
@@ -11,8 +11,8 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-        <a class="nav-link" href="#">
-            <span>Smart pharmacy Dashboard</span></a>
+        <a class="nav-link" href="{% url 'home' %}">
+            <span>Chetemba Pharmacy</span></a>
     </li>
 
     <!-- Divider -->
@@ -20,7 +20,7 @@
 
     <!-- Heading -->
     <div class="sidebar-heading">
-        Interface
+       Pharmacy
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
@@ -60,15 +60,15 @@
         </div>
     </li>
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#sales" data-toggle="collapse" data-target="#collapseTwo"
+        <a class="nav-link collapsed" href="{% url 'home' %}" data-toggle="collapse" data-target="#collapseTwo"
            aria-expanded="true" aria-controls="collapseTwo">
             <span>Sales</span>
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Sales</h6>
-                <a class="collapse-item" href="#sales">Sales</a>
-                <a class="collapse-item" href="">Makes A sale</a>
+                <a class="collapse-item" href="{% url 'home' %}">Sales</a>
+                <a class="collapse-item" href="{% url 'home' %}">Makes A sale</a>
             </div>
         </div>
     </li>
