@@ -5,8 +5,8 @@ from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime, date
 
-from pharmacy.forms.forms import MedicineCategoryForm
-from pharmacy.models import Sale, Stock, Category
+from pharmacy.forms.forms import MedicineCategoryForm, MedicineForm
+from pharmacy.models import Sale, Stock, Category, Medicine
 
 
 # Create your views here.
@@ -131,3 +131,37 @@ def delete_category(request, category_id):
         category = get_object_or_404(Category, pk=category_id)
         category.delete()
         return redirect('categories')
+
+
+def medicines(request):
+    # Check if the user is admin to handle medicine creation
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            form = MedicineForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('medicines')
+        else:
+            form = MedicineForm()
+    medicines = Medicine.objects.all()
+    form = MedicineForm()
+    return render(request, 'pharmacy/medicines.html', {'medicines': medicines, 'form': form})
+
+
+def delete_medicine(request, medicine_id):
+    if request.method == 'POST':
+        medicine = get_object_or_404(Medicine, pk=medicine_id)
+        medicine.delete()
+        return redirect('medicines')
+
+
+@login_required(login_url='login')
+def add_medicine(request):
+    if request.method == 'POST':
+        form = MedicineForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(to='medicines')
+    else:
+        form = MedicineForm()
+    return render(request, 'pharmacy/createMedicine.html', {'form': form, 'currentYear': datetime.now().year})

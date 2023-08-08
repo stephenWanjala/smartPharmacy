@@ -1,0 +1,25 @@
+ <div class="container">
+        <h1>Medicines({{ medicines.count }})</h1>
+        <ul class="list-group">
+            {% for medicine in medicines %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ medicine.name }}</span>
+                {% if request.user.is_superuser %}
+                <form method="post" action="{% url 'delete_medicine' medicine.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </form>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+
+{% if request.user.is_superuser %}
+	{% include 'pharmacy/add_medicine.html' %}
+{% endif %}
+    </div>
+
+
+
