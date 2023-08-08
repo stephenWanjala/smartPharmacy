@@ -1,6 +1,9 @@
-from django import forms
+from datetime import timedelta
 
-from pharmacy.models import Category, Medicine, Purchase, Sale, Stock
+from django import forms
+from django.utils.datetime_safe import date
+
+from pharmacy.models import Category, Medicine, Purchase, Sale
 
 
 class MedicineCategoryForm(forms.ModelForm):
@@ -28,21 +31,26 @@ class MedicineForm(forms.ModelForm):
         # Add Bootstrap classes to form fields
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
-            # Set widget for expiration_date field
-        self.fields['expiration_date'].widget = forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
 
 
 class PurchaseForm(forms.ModelForm):
     class Meta:
         model = Purchase
-        fields = ['medicine', 'quantity_purchased', 'purchase_amount', 'purchase_date', 'supplier']
+        fields = ['medicine', 'quantity_purchased', 'purchase_amount', 'purchase_date', 'expiry_date', 'supplier']
         widgets = {
             'medicine': forms.Select(attrs={'class': 'form-select'}),
             'supplier': forms.Select(attrs={'class': 'form-select'}),
             'quantity_purchased': forms.NumberInput(attrs={'class': 'form-control'}),
             'purchase_amount': forms.NumberInput(attrs={'class': 'form-control'}),
             'purchase_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'expiry_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        today = date.today()
+        self.fields['purchase_date'].widget.attrs['max'] = today
+        self.fields['expiry_date'].widget.attrs['min'] = today + timedelta(days=8)
 
 
 class SaleForm(forms.ModelForm):

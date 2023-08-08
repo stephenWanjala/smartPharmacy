@@ -27,7 +27,6 @@ class Medicine(models.Model):
     name = models.CharField(max_length=200, unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     batch_number = models.CharField(max_length=50)
-    expiration_date = models.DateField()
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -40,33 +39,19 @@ class Stock(models.Model):
 
     @staticmethod
     def remove_expired_medicines():
-        expired_medicines = Medicine.objects.filter(expiration_date__lt=date.today())
+        today = date.today()
+        expired_medicines = Stock.objects.filter(medicine__purchase__expiry_date__lt=today)
 
-        for medicine in expired_medicines:
-            stock, _ = Stock.objects.get_or_create(medicine=medicine)
+        for stock in expired_medicines:
             quantity_removed = stock.quantity
             stock.quantity = 0
             stock.save()
 
             # Log the removal for reference (You can customize this as per your needs)
-            ExpiredMedicineLog.objects.create(medicine=medicine, quantity_removed=quantity_removed)
+            ExpiredMedicineLog.objects.create(medicine=stock.medicine, quantity_removed=quantity_removed)
 
     def __str__(self):
         return f"{self.medicine.name} - Quantity: {self.quantity}"
-
-
-class ExpiredMedicineLog(models.Model):
-    medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
-    quantity_removed = models.PositiveIntegerField()
-    removal_date = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.medicine.name} - Removed: {self.quantity_removed} - {self.removal_date}"
-
-    @receiver(post_save, sender=Medicine)
-    def check_medicine_expiration(sender, instance, **kwargs):
-        if instance.expiration_date < date.today():
-            Stock.remove_expired_medicines()
 
 
 class Purchase(models.Model):
@@ -74,6 +59,7 @@ class Purchase(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     quantity_purchased = models.PositiveIntegerField()
     purchase_date = models.DateField()
+    expiry_date = models.DateField()
     purchase_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
@@ -92,11 +78,28 @@ class Purchase(models.Model):
         stock.save()
 
 
+class ExpiredMedicineLog(models.Model):
+    medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
+    quantity_removed = models.PositiveIntegerField()
+    removal_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.medicine.name} - Removed: {self.quantity_removed} - {self.removal_date}"
+
+    @receiver(post_save, sender=Purchase)
+    def check_medicine_expiration(sender, instance, **kwargs):
+        stock, _ = Stock.objects.get_or_create(medicine=instance.medicine)
+        if instance.expiry_date < date.today():
+            stock.quantity -= instance.quantity_purchased
+            stock.save()
+            ExpiredMedicineLog.objects.create(medicine=instance.medicine, quantity_removed=instance.quantity_purchased)
+
+
 class Sale(models.Model):
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
     quantity_sold = models.PositiveIntegerField()
     selling_price = models.DecimalField(max_digits=10, decimal_places=2)
-    sales_date = models.DateField(auto_now_add=True,)
+    sales_date = models.DateField(auto_now_add=True, )
     customer_name = models.CharField(max_length=100)
 
     def __str__(self):

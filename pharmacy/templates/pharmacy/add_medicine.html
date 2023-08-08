@@ -1,5 +1,5 @@
 <div class="container">
-    <h1>Create Medicine</h1>
+    <h1>Add Drug to Stock List</h1>
     <form method="post" class="row g-3">
         {% csrf_token %}
 
@@ -23,10 +23,7 @@
             {{ form.batch_number }}
         </div>
 
-        <div class="col-md-6">
-            {{ form.expiration_date.label_tag }}
-            {{ form.expiration_date}}
-        </div>
+
 
         <div class="col-12">
             <button type="submit" class="btn btn-primary text-center">Add Medicine</button>
