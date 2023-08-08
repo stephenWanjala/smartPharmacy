@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-2ss#oq5+^grecvu9yj%e+^ab@j)#78#+zh%eret)&r5+rxb#br
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS =['*']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -62,6 +62,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'pharmacy.context_processors.expired_medicine_logs'
             ],
         },
     },

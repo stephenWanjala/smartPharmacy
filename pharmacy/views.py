@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime, date
 
 from pharmacy.forms.forms import MedicineCategoryForm, MedicineForm, PurchaseForm, SaleForm
-from pharmacy.models import Sale, Stock, Category, Medicine, Purchase
+from pharmacy.models import Sale, Stock, Category, Medicine, Purchase, ExpiredMedicineLog
 
 
 # Create your views here.
@@ -214,3 +214,5 @@ def make_sale(request):
         form = SaleForm()
 
     return render(request, 'pharmacy/home.html', {'form': form})
+
+
