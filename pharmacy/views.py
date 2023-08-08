@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import datetime, date
 
 from pharmacy.forms.forms import MedicineCategoryForm
@@ -110,7 +110,24 @@ def add_category(request):
         form = MedicineCategoryForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect(to='phamacy:categories')
+            return redirect(to='categories')
     else:
         form = MedicineCategoryForm()
     return render(request, 'pharmacy/addCategory.html', {'form': form, 'currentYear': datetime.now().year})
+
+
+@login_required(login_url='login')
+def delete_category(request, category_id):
+    if request.method == "POST":
+        if request.user.is_superuser:
+            category = get_object_or_404(Category, pk=category_id)
+            category.delete()
+            return redirect(to='categories')
+
+
+@login_required(login_url='login')
+def delete_category(request, category_id):
+    if request.method == 'POST':
+        category = get_object_or_404(Category, pk=category_id)
+        category.delete()
+        return redirect('categories')
