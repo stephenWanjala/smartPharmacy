@@ -1,7 +1,6 @@
 # Create your models here.
 # pharmacy/models.py
-from time import timezone
-
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -26,8 +25,8 @@ class Category(models.Model):
 class Medicine(models.Model):
     name = models.CharField(max_length=200, unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    batch_number = models.CharField(max_length=50)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    selling_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.name
@@ -98,37 +97,31 @@ class ExpiredMedicineLog(models.Model):
 class Sale(models.Model):
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
     quantity_sold = models.PositiveIntegerField()
-    selling_price = models.DecimalField(max_digits=10, decimal_places=2)
+    selling_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     sales_date = models.DateField(auto_now_add=True, )
-    customer_name = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.medicine.name} - {self.sales_date}"
 
-    def save(self, *args, **kwargs):
+    def clean(self):
         if self.is_valid_sale():
-            # Update stock quantity before saving the sale
-            self.update_stock_quantity()
-            super().save(*args, **kwargs)
+            self.selling_price = self.medicine.selling_price * self.quantity_sold
+        else:
+            raise ValidationError("Invalid sale: medicine is out of stock or not available")
+        super().clean()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  # Run full validation before saving
+        self.update_stock_quantity()
+        super().save(*args, **kwargs)
 
     def is_valid_sale(self):
-        # Check if the medicine is in stock and has been purchased
         stock = Stock.objects.filter(medicine=self.medicine).first()
         if not stock or stock.quantity < self.quantity_sold:
             return False
         return True
 
-    # def update_stock_quantity(self):
-    #     # Get the stock object for the medicine
-    #     stock, created = Stock.objects.get_or_create(medicine=self.medicine)
-    #     # Reduce stock quantity by the quantity sold
-    #     stock.quantity -= self.quantity_sold
-    #     # Ensure stock quantity does not go below zero
-    #     stock.quantity = max(stock.quantity, 0)
-    #     stock.save()
     def update_stock_quantity(self):
-        # Get the stock object for the medicine
         stock, created = Stock.objects.get_or_create(medicine=self.medicine)
-        # Reduce stock quantity by the quantity sold
         stock.quantity -= self.quantity_sold
         stock.save()

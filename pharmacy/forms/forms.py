@@ -56,12 +56,12 @@ class PurchaseForm(forms.ModelForm):
 class SaleForm(forms.ModelForm):
     class Meta:
         model = Sale
-        fields = ['medicine', 'quantity_sold', 'selling_price', 'customer_name']
+        fields = ['medicine', 'quantity_sold', ]
         widgets = {
             'medicine': forms.Select(attrs={'class': 'form-select'}),
-            'quantity_sold': forms.NumberInput(attrs={'class': 'form-control'}),
-            'selling_price': forms.NumberInput(attrs={'class': 'form-control'}),
-            'customer_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'quantity_sold': forms.NumberInput(attrs={'class': 'form-control', 'id': 'quantity-sold'}),
+            # 'selling_price': forms.NumberInput(
+            #     attrs={'class': 'form-control', 'readonly': 'readonly', 'id': 'selling-price', 'disabled': 'disabled'}),
         }
 
     def __init__(self, *args, **kwargs):

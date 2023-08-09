@@ -1,3 +1,4 @@
+{% load static %}
 <!-- pharmacy/templates/make_sale_modal.html -->
 
 <div class="modal fade" id="makeSaleModal" tabindex="-1" aria-labelledby="makeSaleModalLabel" aria-hidden="true">
@@ -13,7 +14,9 @@
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-primary">Make Sale</button>
                 </form>
+                <script src="{% static 'js/sales.js' %}"></script>
             </div>
         </div>
     </div>
 </div>
+
